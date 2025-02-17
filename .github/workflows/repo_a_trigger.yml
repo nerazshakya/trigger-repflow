@@ -1,0 +1,31 @@
+name: Trigger Repo B Workflow and Wait for Status
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  trigger-and-wait:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo A
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      - name: Install requests library
+        run: |
+          pip install requests
+
+      - name: Trigger and Wait for Repo B Workflow
+        run: |
+          python trigger_and_wait_for_status.py
+        env:
+          REPO_B_TOKEN: ${{ secrets.REPO_B_TOKEN }}
+          REPO_B_OWNER: ${{ secrets.REPO_B_OWNER }}
+          REPO_B_NAME: ${{ secrets.REPO_B_NAME }}
+          EVENT_TYPE: 'trigger-workflow'

@@ -1,42 +1,50 @@
-name: "Trigger Another Repository Workflow"
-description: "Triggers a workflow in another repository and waits for its completion."
+name: 'Trigger and Wait for this repository workflow'
+description: 'Triggers a workflow in this repository and waits for its status (completed, failed, or canceled).'
 inputs:
-  token:
-    description: "GitHub Personal Access Token"
+  repo_b_token:
+    description: 'GitHub token for Repo B to trigger workflows.'
     required: true
-  repo:
-    description: "Target repository (owner/repo)"
+    default: ${{ secrets.INPUT_TOKEN }}
+  repo_b_owner:
+    description: 'Owner of Repo B (e.g., GitHub username or organization).'
     required: true
+    default: ${{ secrets.INPUT_REPO_OWNER }}
+  repo_b_name:
+    description: 'Name of Triggerd Repository.'
+    required: true
+    default: ${{ secrets.INPUT_REPO_NAME }}
   event_type:
-    description: "The event type for repository_dispatch"
-    required: true
-  payload:
-    description: "JSON payload to pass to the triggered workflow"
+    description: 'The event type to trigger in Triggerd Repository (e.g., trigger-workflow).'
     required: false
-    default: "{}"
-
+    default: 'trigger-workflow'
+  timeout_minutes:
+    description: 'Maximum time to wait for the workflow status (in minutes).'
+    required: false
+    default: '30'
+  poll_interval_seconds:
+    description: 'Interval (in seconds) between status checks.'
+    required: false
+    default: '30'
 runs:
-
   using: "composite"
+
   steps:
-    - name: Checkout the repository
-      uses: actions/checkout@v3
-
-    - name: Set up Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.13'
-
-    - name: Install dependencies
-      run: |
-        pip install -r requirements.txt
+    - name: Install Python Dependencies
       shell: bash
+      env:
+        INPUT_TOKEN: ${{ inputs.token }}
+        INPUT_REPO_OWNER: ${{ inputs.repo_owner }}
+        INPUT_REPO_NAME: ${{ inputs.repo_name }}
+        INPUT_EVENT_TYPE: ${{inputs.event_type}}  
+      run: pip install -r "$GITHUB_ACTION_PATH/requirements.txt"
 
-    - name: Trigger the workflow
-      run: |
-        python trigger_workflow.py \
-          --token "${{ inputs.token }}" \
-          --repo "${{ inputs.repo }}" \
-          --event_type "${{ inputs.event_type }}" \
-          --payload '${{ inputs.payload }}'
+    - name: Run Notification Script
       shell: bash
+      env:
+        INPUT_TOKEN: ${{ inputs.token }}
+        INPUT_REPO_OWNER: ${{ inputs.repo_owner }}
+        INPUT_REPO_NAME: ${{ inputs.repo_name }}
+        INPUT_EVENT_TYPE: ${{inputs.event_type}}    
+      run: python "$GITHUB_ACTION_PATH/notify.py"
+
+
