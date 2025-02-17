@@ -25,7 +25,7 @@ jobs:
         run: |
           python trigger_and_wait_for_status.py
         env:
-          token: ${{ secrets.REPO_TOKEN }}
-          repo_owner: ${{ secrets.REPO_OWNER }}
-          repo_name: ${{ secrets.REPO_NAME }}
+          token: ${{ secrets.token }}
+          repo_owner: ${{ github.repository_owner }}
+          repo_name: ${{ github.repository }}
           event_type: 'trigger-workflow'
