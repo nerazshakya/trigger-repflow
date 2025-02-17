@@ -1,15 +1,15 @@
 name: 'Trigger and Wait for this repository workflow'
 description: 'Triggers a workflow in this repository and waits for its status (completed, failed, or canceled).'
 inputs:
-  repo_b_token:
+  token:
     description: 'GitHub token for Repo B to trigger workflows.'
     required: true
     default: ${{ secrets.INPUT_TOKEN }}
-  repo_b_owner:
+  repo_owner:
     description: 'Owner of Repo B (e.g., GitHub username or organization).'
     required: true
     default: ${{ secrets.INPUT_REPO_OWNER }}
-  repo_b_name:
+  repo_name:
     description: 'Name of Triggerd Repository.'
     required: true
     default: ${{ secrets.INPUT_REPO_NAME }}
