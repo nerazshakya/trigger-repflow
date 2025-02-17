@@ -1,3 +1,4 @@
+import sys
 import os
 import requests
 import time
@@ -13,6 +14,9 @@ def get_workflow_run_status(owner, repo, run_id, token):
 def trigger_and_wait_for_status():
     # Get the environment variables passed from GitHub Actions
     token = os.getenv("INPUT_TOKEN")
+    if not token:
+        print("Error: TOKEN is not set.")
+        sys.exit(1)
     repo_owner = os.getenv("INPUT_REPO_OWNER")
     repo_name = os.getenv("INPUT_REPO_NAME")
     event_type = os.getenv("INPUT_EVENT_TYPE", "trigger-workflow")
@@ -29,14 +33,11 @@ def trigger_and_wait_for_status():
     response = requests.post(url, json=data, headers=headers)
 
     # Check if the trigger was successful and get the run ID
-    if response.status_code == 204:
-        print(f"Successfully triggered workflow in {repo_owner}/{repo_name}")
-        # You need to get the run ID, which could come from another part of the response
-        # For simplicity, assume run_id is returned or stored earlier
-        run_id = response.headers.get('X-GitHub-Request-Id')  # You may need a different way to retrieve the run_id
-    else:
+    if response.status_code != 204:
         print(f"Failed to trigger workflow: {response.status_code} - {response.text}")
-        return
+        sys.exit(1)  # Exit with error code if the trigger fails        
+    print(f"Successfully triggered workflow in {repo_owner}/{repo_name}")
+    run_id = response.headers.get('X-GitHub-Request-Id')  # You may need a different way to retrieve the run_id
 
     # Start polling for status
     status = None
@@ -49,16 +50,12 @@ def trigger_and_wait_for_status():
         # Check elapsed time to ensure we're not exceeding the timeout
         if time.time() - start_time > timeout:
             print("Timeout reached. Stopping status check.")
-            break
+            sys.exit(1)  # Exit with error code if the timeout is reached
 
         # Get the current status of the workflow run
         result = get_workflow_run_status(repo_owner, repo_name, run_id, token)
         status = result.get('status')
-
-        # Print the current status
         print(f"Current status: {status}")
-
-        # Wait for the next polling interval
         time.sleep(poll_interval)
 
     # Once the status is final, handle the conclusion
@@ -68,11 +65,14 @@ def trigger_and_wait_for_status():
         if conclusion == 'success':
             print(f"{repo_name} completed successfully.")
         elif conclusion == 'failure':
-            print("Repo B failed.")
+            print(f"{repo_name} failed.")
+            sys.exit(1)
         else:
             print(f"{repo_name} was canceled.")
+            sys.exit(1)
     else:
         print(f"Workflow was {status} without reaching 'completed'.")
+        sys.exit(1)
 
 # Run the function to trigger the workflow and wait for its status
 trigger_and_wait_for_status()

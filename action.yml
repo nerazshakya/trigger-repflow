@@ -43,5 +43,6 @@ runs:
         INPUT_REPO_NAME: ${{ inputs.repo_name }}
         INPUT_EVENT_TYPE: ${{inputs.event_type}}    
       run: python "$GITHUB_ACTION_PATH/trigger_and_wait.py"
+      continue-on-error: false
 
 
