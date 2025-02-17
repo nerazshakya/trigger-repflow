@@ -4,15 +4,12 @@ inputs:
   token:
     description: 'GitHub token for Repo B to trigger workflows.'
     required: true
-    default: ${{ secrets.INPUT_TOKEN }}
   repo_owner:
     description: 'Owner of Repo B (e.g., GitHub username or organization).'
     required: true
-    default: ${{ secrets.INPUT_REPO_OWNER }}
   repo_name:
     description: 'Name of Triggerd Repository.'
     required: true
-    default: ${{ secrets.INPUT_REPO_NAME }}
   event_type:
     description: 'The event type to trigger in Triggerd Repository (e.g., trigger-workflow).'
     required: false
