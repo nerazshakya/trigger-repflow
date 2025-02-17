@@ -42,6 +42,6 @@ runs:
         INPUT_REPO_OWNER: ${{ inputs.repo_owner }}
         INPUT_REPO_NAME: ${{ inputs.repo_name }}
         INPUT_EVENT_TYPE: ${{inputs.event_type}}    
-      run: python "$GITHUB_ACTION_PATH/notify.py"
+      run: python "$GITHUB_ACTION_PATH/trigger_and_wait.py"
 
 
