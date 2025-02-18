@@ -2,11 +2,9 @@ name: 'Trigger and Wait for this repository workflow'
 description: 'Triggers a workflow in this repository and waits for its status (completed, failed, or canceled).'
 inputs:
   token:
-    description: 'GITHUB_TOKEN or a `repo` scoped Personal Access Token (PAT).'
-    default: ${{ github.token }}
+    description: 'PAT TOKEN or a `repo` scoped Personal Access Token (PAT).'
   repository:
     description: 'The full name of the repository to send the dispatch.'
-    default: ${{ github.repository }}
   event_type:
     description: 'A custom webhook event name.'
     required: true
@@ -18,7 +16,7 @@ runs:
     - name: Install Python Dependencies
       shell: bash
       env:
-        GITHUB_REPOSITORY: ${{ inputs.repository }}
+        INPUT_REPOSITORY: ${{ inputs.repository }}
         INPUT_TOKEN: ${{ inputs.token }}
         INPUT_EVENT_TYPE: ${{inputs.event_type}}  
       run: pip install -r "$GITHUB_ACTION_PATH/requirements.txt"
@@ -26,7 +24,7 @@ runs:
     - name: Run Notification Script
       shell: bash
       env:
-        GITHUB_REPOSITORY: ${{ inputs.repository }}
+        INPUT_REPOSITORY: ${{ inputs.repository }}
         INPUT_TOKEN: ${{ inputs.token }}
         INPUT_EVENT_TYPE: ${{inputs.event_type}}    
       run: python "$GITHUB_ACTION_PATH/trigger_and_wait.py"

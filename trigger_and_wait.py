@@ -3,9 +3,9 @@ import os
 import requests
 import time
 
-github_repository = os.getenv("GITHUB_REPOSITORY")  
-if github_repository:
-    owner, repo = github_repository.split("/")
+repository = os.getenv("INPUT_REPOSITORY")  
+if repository:
+    owner, repo = repository.split("/")
 else:
     print("GITHUB_REPOSITORY environment variable is not set.")
 
