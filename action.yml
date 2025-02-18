@@ -27,7 +27,7 @@ runs:
         INPUT_REPOSITORY: ${{ inputs.repository }}
         INPUT_TOKEN: ${{ inputs.token }}
         INPUT_EVENT_TYPE: ${{inputs.event_type}}    
-      run: python "$GITHUB_ACTION_PATH/trigger_and_wait.py"
+      run: python "$GITHUB_ACTION_PATH/workflow_dispatch.py"
       continue-on-error: false
 
 
