@@ -18,7 +18,7 @@ runs:
     - name: Install Python Dependencies
       shell: bash
       env:
-        GITHUB_REPOSITORY: ${{ github.repository }}
+        GITHUB_REPOSITORY: ${{ inputs.repository }}
         INPUT_TOKEN: ${{ inputs.token }}
         INPUT_EVENT_TYPE: ${{inputs.event_type}}  
       run: pip install -r "$GITHUB_ACTION_PATH/requirements.txt"
@@ -26,7 +26,7 @@ runs:
     - name: Run Notification Script
       shell: bash
       env:
-        GITHUB_REPOSITORY: ${{ github.repository }}
+        GITHUB_REPOSITORY: ${{ inputs.repository }}
         INPUT_TOKEN: ${{ inputs.token }}
         INPUT_EVENT_TYPE: ${{inputs.event_type}}    
       run: python "$GITHUB_ACTION_PATH/trigger_and_wait.py"
