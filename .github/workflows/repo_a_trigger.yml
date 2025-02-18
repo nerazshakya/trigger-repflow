@@ -3,7 +3,7 @@ name: Trigger Repo B Workflow and Wait for Status
 on:
   push:
     branches:
-      - main
+      - test
 
 jobs:
   trigger-and-wait:
