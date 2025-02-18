@@ -15,8 +15,13 @@ if not token:
     sys.exit(1)
 event_type = os.getenv("INPUT_EVENT_TYPE", "trigger-workflow")
 
+def get_api_base_url():
+    return os.getenv('GITHUB_API_URL', 'https://api.github.com')
+base_url = get_api_base_url()
+
+
 def get_workflow_run_status(owner, repo, run_id, token):
-    url = f"https://api.github.com/repos/{owner}/{repo}/actions/runs/{run_id}"
+    url = f"{base_url}/repos/{owner}/{repo}/actions/runs/{run_id}"
     headers = {
         "Accept": "application/vnd.github.v3+json",
         'Authorization': f'token {token}'
@@ -26,7 +31,7 @@ def get_workflow_run_status(owner, repo, run_id, token):
 
 def trigger_and_wait_for_status(owner, repo, token, event_type):
 
-    url = f"https://api.github.com/repos/{owner}/{repo}/dispatches"
+    url = f"{base_url}/repos/{owner}/{repo}/dispatches"
     data = {
         "event_type": event_type
     }
