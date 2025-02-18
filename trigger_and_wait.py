@@ -46,9 +46,23 @@ def trigger_and_wait_for_status(owner, repo, token, event_type):
         print(f"Failed to trigger workflow: {response.status_code} - {response.text}")
         sys.exit(1)  # Exit with error code if the trigger fails        
     print(f"Successfully triggered workflow in {owner}/{repo}")
-    run_id = response.headers.get('X-GitHub-Request-Id')  # You may need a different way to retrieve the run_id
 
-    # Start polling for status
+#    run_id = response.headers.get('X-GitHub-Request-Id')
+    url_runs = f"{base_url}/repos/{owner}/{repo}/actions/runs"
+    response_runs = requests.get(url_runs, headers=headers)
+    if response_runs.status_code != 200:
+        print(f"Failed to retrieve workflow runs: {response_runs.status_code} - {response_runs.text}")
+        sys.exit(1)
+
+        runs = response_runs.json().get('workflow_runs', [])
+    if not runs:
+        print("No workflow runs found.")
+        sys.exit(1)
+
+    # **Get the latest run ID (assuming the latest is the one we just triggered)**
+    run_id = runs[0]['id']
+    print(f"Latest run ID: {run_id}")
+    
     status = None
     timeout = 30 * 60  # Timeout after 30 minutes (in seconds)
     poll_interval = 30  # Poll every 30 seconds
